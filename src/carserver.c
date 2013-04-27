@@ -7,11 +7,14 @@
 #include <signal.h>
 
 #include <linux/can.h>
+#include <sys/socket.h>
 
 #include "can.h"
 #include "server.h"
 
+// socket to can interface
 int cansock;
+// zmq socket
 void *netsock;
 
 struct can_frame frame;
@@ -22,7 +25,7 @@ void *car_task(void *id) {
     for (;;) {
         can_read(cansock, &frame);
         printf("Recv: 0x%X (%d): 0x%X 0x%X 0x%X 0x%X 0x%X 0x%X 0x%X 0x%X\n", 
-                frame.can_id, 
+                frame.can_id,
                 frame.can_dlc,
                 frame.data[0],
                 frame.data[1],
