@@ -6,8 +6,8 @@
 #include <pthread.h>
 #include <signal.h>
 
-#include <linux/can.h>
 #include <sys/socket.h>
+#include <linux/can.h>
 
 #include "can.h"
 #include "server.h"
