@@ -67,7 +67,7 @@ int main (void) {
     syslog(LOG_INFO, "starting carserver...");
 
     // initialize can
-    cansock = can_init("vcan0");
+    cansock = can_init("can0");
     // initialize network
     netsock = server_init();
 
