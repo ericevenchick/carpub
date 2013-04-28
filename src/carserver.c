@@ -18,6 +18,7 @@ int cansock;
 void *netsock;
 
 struct can_frame frame;
+int bs_data;
 
 // task for dealing with car related activities
 void *car_task(void *id) {
@@ -53,9 +54,10 @@ void *server_task(void *id) {
         printf("got: %s\n", req_buffer);
         */
         //sprintf(resp_buffer, "%X%X\0", frame.can_id, frame.data[0]);
-        sprintf(resp_buffer, "data publish");
+        sprintf(resp_buffer, "SOC %d", bs_data);
         status = carpub_publish(netsock, resp_buffer);
         sleep(1);
+        bs_data++;
     }
 }
 
@@ -64,6 +66,9 @@ int main (void) {
     long car_thread_id = 0;
     pthread_t server_thread;
     long server_thread_id = 1;
+
+    // init some fake variable
+    bs_data = 0;
 
     // initialize logging
     openlog("carserver", LOG_PID|LOG_CONS, LOG_USER);
