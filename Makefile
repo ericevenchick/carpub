@@ -4,7 +4,7 @@ CC = gcc
 CFLAGS = -g
 LIBS = -lzmq -lpthread
 
-OBJS = can.o carpub.o carserver.o canstore.o
+OBJS = can.o carpub.o carserver.o canstore.o canstore_parser.o
 
 %.o: src/%.c
 	$(CC) $(CFLAGS) -c -o $@ $<

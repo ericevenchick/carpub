@@ -41,43 +41,36 @@ void *canstore_task(void *void_canstore_data)
     syslog(LOG_DEBUG, "starting canstore task");
     for (;;) {
         #ifdef FAKE_CAN
-        // when fake can is enabled, just populate ID 0x400 with 4 random bytes
+        // when fake can is enabled, just populate some fake data
         recv_frame.can_id = 0x410;
-        recv_frame.can_dlc = 4;
+        recv_frame.can_dlc = 8;
         recv_frame.data[0] = rand();
         recv_frame.data[1] = rand();
         recv_frame.data[2] = rand();
-        recv_frame.data[3] = 51;
+        recv_frame.data[3] = rand();
+
+        canstore_parse_frame(canstore_data, recv_frame);
+
+        recv_frame.can_id = 0x430;
+        recv_frame.can_dlc = 8;
+        recv_frame.data[7] = rand();
+
+        canstore_parse_frame(canstore_data, recv_frame);
+
         sleep(1);
         #else
         // blocking read, wait for can data
         can_read(canstore_data->cansock, &recv_frame);
-        #endif
-
         // parse and store data
         canstore_parse_frame(canstore_data, recv_frame);
-    }
-}
-
-void canstore_parse_frame(canstore_t canstore_data, struct can_frame frame)
-{
-    double real;
-    switch (frame.can_id) {
-        case CANSTORE_CANID_BCM_STATUS:
-            // bcm_soc, byte 3, scale 0.5
-            real = frame.data[3] * 0.5;
-            canstore_set(canstore_data, CANSTORE_VALUE_HV_SOC, real);
-            break;
-        case CANSTORE_CANID_BCM_DATA_1:
-            // bcm_lvbat
-            canstore_set(canstore_data, CANSTORE_VALUE_LV_VOLT, frame.data[7]);
-            break;
+        #endif
     }
 }
 
 int canstore_set(canstore_t canstore_data, int id, double value)
 {
     if (id < NUM_STORE_VALUES) {
+        syslog(LOG_DEBUG, "setting value: %d - %f", id, value);
         canstore_data->values[id] = value;
     } else {
         return -1;
@@ -87,6 +80,7 @@ int canstore_set(canstore_t canstore_data, int id, double value)
 double canstore_get(canstore_t canstore_data, int id)
 {
     if (id < NUM_STORE_VALUES) {
+        syslog(LOG_DEBUG, "getting value: %d", id);
         return canstore_data->values[id];
     } else {
         return -1;

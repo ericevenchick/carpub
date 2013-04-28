@@ -34,15 +34,25 @@ void *carpub_task(void *void_carpub_data)
 {
     carpub_t carpub_data = (carpub_t)void_carpub_data;
 
-    char req_buffer[100];
-    char resp_buffer[100];
+    char resp_buffer[40];
     int status;
     double data;
+
     syslog(LOG_DEBUG, "starting carpub task");
+
     for (;;) {
         data = canstore_get(carpub_data->canstore, 0);
         sprintf(resp_buffer, "SOC %f", data);
         status = carpub_publish(carpub_data, resp_buffer);
+
+        data = canstore_get(carpub_data->canstore, 1);
+        sprintf(resp_buffer, "GFD %f", data);
+        status = carpub_publish(carpub_data, resp_buffer);
+
+        data = canstore_get(carpub_data->canstore, 2);
+        sprintf(resp_buffer, "LVBATT %f", data);
+        status = carpub_publish(carpub_data, resp_buffer);
+
         usleep(PUB_DELAY_US);
     }
 }
