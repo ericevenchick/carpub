@@ -3,7 +3,7 @@ OUTPUT = carserver
 CC = gcc
 LIBS = -lzmq -lpthread
 
-OBJS = can.o server.o carserver.o
+OBJS = can.o carpub.o carserver.o
 
 %.o: src/%.c
 	$(CC) -c -o $@ $<

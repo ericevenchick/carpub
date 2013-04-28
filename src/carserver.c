@@ -10,7 +10,7 @@
 #include <linux/can.h>
 
 #include "can.h"
-#include "server.h"
+#include "carpub.h"
 
 // socket to can interface
 int cansock;
@@ -45,14 +45,17 @@ void *server_task(void *id) {
     int status;
     syslog(LOG_DEBUG, "starting server task");
     for (;;) {
-        status = server_get_req(netsock, req_buffer);
+        /*status = server_get_req(netsock, req_buffer);
         if(status < 0) {
             printf("network error\n");
             continue;
         }
         printf("got: %s\n", req_buffer);
-        sprintf(resp_buffer, "%X%X\0", frame.can_id, frame.data[0]);
-        status = server_send_resp(netsock, resp_buffer);
+        */
+        //sprintf(resp_buffer, "%X%X\0", frame.can_id, frame.data[0]);
+        sprintf(resp_buffer, "data publish");
+        status = carpub_publish(netsock, resp_buffer);
+        sleep(1);
     }
 }
 
@@ -69,7 +72,7 @@ int main (void) {
     // initialize can
     cansock = can_init("can0");
     // initialize network
-    netsock = server_init();
+    netsock = carpub_init("tcp://*:5555");
 
     // launch threads
     pthread_create(&car_thread, NULL, car_task, (void *)car_thread_id);

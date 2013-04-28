@@ -4,10 +4,9 @@ import time
 ZMQ_PORT = 5555
 
 ctx = zmq.Context()
-socket = ctx.socket(zmq.REQ)
+socket = ctx.socket(zmq.SUB)
 socket.connect("tcp://localhost:%s" % ZMQ_PORT)
+socket.setsockopt(zmq.SUBSCRIBE, '')
 
 while True:
-    socket.send("GO")
     print socket.recv()
-    time.sleep(1)
