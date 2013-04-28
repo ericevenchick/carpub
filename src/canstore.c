@@ -61,7 +61,7 @@ void *canstore_task(void *void_canstore_data)
 
         canstore_parse_frame(canstore_data, recv_frame);
 
-        sleep(1);
+        usleep(1000);
         #else
         // blocking read, wait for can data
         can_read(canstore_data->cansock, &recv_frame);

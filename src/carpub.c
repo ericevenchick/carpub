@@ -13,7 +13,7 @@
 #include "canstore.h"
 #include "carpub.h"
 
-#define PUB_DELAY_US 1000*1000
+#define PUB_DELAY_US 100*1000
 
 struct carpub_priv_data * carpub_init(const char *connect_str, canstore_t canstore)
 {
