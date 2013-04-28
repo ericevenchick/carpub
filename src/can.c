@@ -14,7 +14,7 @@
 
 #include "can.h"
 
-int can_init(char* ifname) {
+int can_init(const char* ifname) {
 	int cansock;
 
 	struct sockaddr_can addr;
