@@ -48,6 +48,10 @@ void *canstore_task(void *void_canstore_data)
         recv_frame.data[1] = rand();
         recv_frame.data[2] = rand();
         recv_frame.data[3] = rand();
+        recv_frame.data[4] = rand();
+        recv_frame.data[5] = rand();
+        recv_frame.data[6] = rand();
+        recv_frame.data[7] = rand();
 
         canstore_parse_frame(canstore_data, recv_frame);
 

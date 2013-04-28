@@ -30,29 +30,27 @@ struct carpub_priv_data * carpub_init(const char *connect_str, canstore_t cansto
     return carpub_data;
 }
 
+int carpub_send_canstore_value(carpub_t carpub_data, int id, const char *key)
+{
+    double data;
+    char resp_buffer[40];
+
+    data = canstore_get(carpub_data->canstore, id);
+    sprintf(resp_buffer, "%s %f", key, data);
+    return carpub_publish(carpub_data, resp_buffer);
+}
+
 void *carpub_task(void *void_carpub_data)
 {
     carpub_t carpub_data = (carpub_t)void_carpub_data;
 
-    char resp_buffer[40];
-    int status;
-    double data;
-
     syslog(LOG_DEBUG, "starting carpub task");
 
     for (;;) {
-        data = canstore_get(carpub_data->canstore, 0);
-        sprintf(resp_buffer, "SOC %f", data);
-        status = carpub_publish(carpub_data, resp_buffer);
-
-        data = canstore_get(carpub_data->canstore, 1);
-        sprintf(resp_buffer, "GFD %f", data);
-        status = carpub_publish(carpub_data, resp_buffer);
-
-        data = canstore_get(carpub_data->canstore, 2);
-        sprintf(resp_buffer, "LVBATT %f", data);
-        status = carpub_publish(carpub_data, resp_buffer);
-
+        carpub_send_canstore_value(carpub_data, CANSTORE_VALUE_BCM_SOC, "SOC");
+        carpub_send_canstore_value(carpub_data, CANSTORE_VALUE_BCM_GFD, "GFD");
+        carpub_send_canstore_value(carpub_data, CANSTORE_VALUE_BCM_IBAT, "IBAT");
+        carpub_send_canstore_value(carpub_data, CANSTORE_VALUE_BCM_LVBATT, "LVBATT");
         usleep(PUB_DELAY_US);
     }
 }
