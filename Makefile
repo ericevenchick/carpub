@@ -1,10 +1,10 @@
-OUTPUT = carserver
+OUTPUT = carpub
 
 CC = gcc
 CFLAGS = -g
 LIBS = -lzmq -lpthread
 
-OBJS = can.o carpub.o carserver.o canstore.o canstore_parser.o
+OBJS = can.o carpub.o carpub_server.o canstore.o canstore_parser.o
 
 %.o: src/%.c
 	$(CC) $(CFLAGS) -c -o $@ $<
@@ -13,6 +13,6 @@ $(OUTPUT): $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
 
 clean:
-	-rm *.o carserver
+	-rm *.o $(OUTPUT)
 
 .PHONY: clean
